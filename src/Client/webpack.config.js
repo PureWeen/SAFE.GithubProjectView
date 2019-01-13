@@ -1,6 +1,9 @@
 var path = require("path");
 var webpack = require("webpack");
 var MinifyPlugin = require("terser-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function resolve(filePath) {
     return path.join(__dirname, filePath)
@@ -8,6 +11,13 @@ function resolve(filePath) {
 
 // passing -p on the command line to webpack specifies production mode, otherwise debug is used.
 var isProduction = process.argv.indexOf("-p") >= 0;
+
+var commonPlugins = [
+    new HtmlWebpackPlugin({
+        filename: resolve('./index.html'),
+        template: resolve('./public/index.html')
+    })
+];
 
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
 
@@ -33,6 +43,9 @@ module.exports = {
             "whatwg-fetch",
             "@babel/polyfill",
             resolve("./Client.fsproj")
+        ],
+        style: [
+            resolve("./scss/main.scss")
         ]
     },
     output: {
@@ -69,10 +82,19 @@ module.exports = {
           })] : []
     },
     // In development, enable hot reloading when code changes without refreshing the browser or losing state.
-    plugins: isProduction ? [] : [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin()
-    ],
+    plugins: isProduction ?
+        commonPlugins.concat([
+            new MiniCssExtractPlugin({
+                filename: resolve('style.css')
+            }),
+            new CopyWebpackPlugin([
+                { from: resolve('./static') }
+            ])
+        ])
+        : commonPlugins.concat([
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.NamedModulesPlugin()
+        ]),
     // Configuration for the development server
     devServer: {
         // redirect requests that start with /api/* to the server on port 8085
@@ -113,6 +135,24 @@ module.exports = {
                     loader: 'babel-loader',
                     options: babelOptions
                 },
+            },
+            {
+                test: /\.(sass|scss|css)$/,
+                use: [
+                    isProduction
+                        ? MiniCssExtractPlugin.loader
+                        : 'style-loader',
+                    'css-loader',
+                    'sass-loader',
+                ],
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?.*$|$)/,
+                use: ["file-loader"]
             }
         ]
     }
