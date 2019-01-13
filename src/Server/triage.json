@@ -1,0 +1,29 @@
+{
+    "data": {
+        "repository": {
+            "project": {
+                "columns": {
+                    "nodes": [
+                        {
+                            "name": "New",
+                            "cards": {
+                                "nodes": [
+                                    {
+                                        "content": {
+                                            "title": "Issue Name",
+                                            "updatedAt": "2018-12-29T23:40:03Z",
+                                            "createdAt": "2018-12-29T23:40:03Z",
+                                            "number": 4872,
+                                            "labels": { "nodes": [ { "name": "t/bug :bug:" } ] },
+                                            "comments": { "nodes": [ { "author": { "login": "StephaneDelcroix" }, "bodyText": "comment body" } ] }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
