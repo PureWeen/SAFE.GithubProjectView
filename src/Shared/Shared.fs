@@ -8,7 +8,7 @@ type Issue = {Labels:list<string>; Comments:list<Comment>; Title:string; Number:
 type ProjectCardIssue = {ColumnName:string; Issue:Issue}
 type Counter = { Value : list<ProjectCardIssue> }
 
-let teamMembers =  ["PureWeen"; "hartez";"StephaneDelcroix";"samhouts";"kingces95" ];
+let teamMembers =  ["PureWeen"; "hartez";"StephaneDelcroix";"samhouts";"kingces95";"rmarinho" ];
 let labelsToSkip = Set.ofList["p/gtk"; "p/macOS"; "p/WPF"; "p/Tizen"; "a/liveplayer"; "e/1"]
 let activeColumns = Set.ofList["New"; "Needs Info"; "Reopened"]
 let platformLabels = Set.ofList["p/UWP"; "p/gtk"; "p/macOS"; "p/WPF"; "p/Tizen"; "p/Android"; "p/iOS"]
