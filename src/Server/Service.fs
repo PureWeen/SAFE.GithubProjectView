@@ -78,7 +78,7 @@ let getInitCounter (config:Config) =
 
   let thing = retrieveString response.Body
   let triageResult = TriageProvider.Parse(thing)
-
+  // Console.WriteLine(thing)
   triageResult.Data.Repository.Project.Columns.Nodes
     |> Seq.filter (fun x -> Set.contains x.Name activeColumns)
     |> Seq.where
@@ -86,8 +86,10 @@ let getInitCounter (config:Config) =
             ds.Cards.Nodes
             |> Seq.exists
                 (fun item ->
-                    item.Content.Labels.Nodes
-                    |> Seq.exists (fun label -> not (Set.contains label.Name labelsToSkip))
+                    match item.Content.JsonValue.TryGetProperty("labels") with
+                      | Some _ -> item.Content.Labels.Nodes
+                                        |> Seq.exists (fun label -> not (Set.contains label.Name labelsToSkip))
+                      | None -> true
                 )
         )
     |> Seq.map
@@ -99,11 +101,24 @@ let getInitCounter (config:Config) =
                     Issue =
                     {
                       Title = card.Content.Title;
-                      Labels=card.Content.Labels.Nodes |> Seq.map(fun label -> label.Name) |> Seq.toList;
-                      Comments=card.Content.Comments.Nodes |> Seq.map(fun comment -> { Author = comment.Author.Login; BodyText = comment.BodyText  }) |> Seq.toList;
-                      Number=card.Content.Number;
-                      UpdatedAt=card.Content.UpdatedAt;
-                      CreatedAt=card.Content.CreatedAt;
+                      Labels= match card.Content.JsonValue.TryGetProperty("labels") with
+                                      | Some _ -> card.Content.Labels.Nodes |> Seq.map(fun label -> label.Name) |> Seq.toList
+                                      | None -> List.empty<string>
+                      Comments = match card.Content.JsonValue.TryGetProperty("comments") with
+                                      | Some _ -> card.Content.Comments.Nodes |> Seq.map(fun comment -> { Author = comment.Author.Login; BodyText = comment.BodyText  }) |> Seq.toList
+                                      | None -> List.empty<Comment>
+                      
+                      
+                      //card.Content.Comments.Nodes |> Seq.map(fun comment -> { Author = comment.Author.Login; BodyText = comment.BodyText  }) |> Seq.toList;
+                      Number = match card.Content.JsonValue.TryGetProperty("number") with
+                                      | Some _ -> card.Content.Number
+                                      | None -> -1;
+                      UpdatedAt = match card.Content.JsonValue.TryGetProperty("updatedAt") with
+                                      | Some _ -> card.Content.UpdatedAt
+                                      | None -> DateTimeOffset.MinValue;
+                      CreatedAt = match card.Content.JsonValue.TryGetProperty("createdAt") with
+                                      | Some _ -> card.Content.CreatedAt
+                                      | None -> DateTimeOffset.MinValue;
                     }
                 })
         )
