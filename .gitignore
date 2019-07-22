@@ -357,3 +357,6 @@ release.sh
 deploy
 appsettings.Development.json
 deploy.zip
+
+# MFractors (Xamarin productivity tool) working folder
+.ionide/
