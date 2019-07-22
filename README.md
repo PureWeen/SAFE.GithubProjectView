@@ -41,3 +41,6 @@ If you want to know more about the full Azure Stack and all of it's components (
 ## Troubleshooting
 
 * **fake not found** - If you fail to execute `fake` from command line after installing it as a global tool, you might need to add it to your `PATH` manually: (e.g. `export PATH="$HOME/.dotnet/tools:$PATH"` on unix) - [related GitHub issue](https://github.com/dotnet/cli/issues/9321)
+
+
+fake build --target appservice -e subscriptionId=<subid> -e clientId=<clientid> -e environment=triager
